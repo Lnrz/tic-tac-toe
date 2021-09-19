@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    background-image: url(../images/whitePaper.jpeg);
+}
+
+html, body, body > div {
+    height: 100%;
+    margin: 0;
+}
+
+.flexbox {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+}
+
+.flexbox.column > div {
+    margin: 15px;
+}
+
+.flexbox.column > div:first-child {
+    flex: 1;
+    /*background-color: red;*/
+    margin-bottom: 0px;
+}
+
+.flexbox.column > div:last-child {
+    flex: 5;
+    /*background-color: blue;*/
+}
+
+.flexbox.center > .flexbox {
+    /*background-color: green;*/
+    width: 450px;
+    height: 450px;
+}
+
+.flexbox.center > .flexbox > div {
+    height: 150px;
+    width: 150px;
+    border: 2.5px inset black;
+    font-size: 135px;
+    text-align: center;
+    font-family: 'Gochi Hand', cursive;
+    color: transparent;
+    text-shadow: 0px 0px 2px black;
+}
+
+#_0_0, #_0_1, #_0_2 {
+    border-top: 0;
+} 
+
+#_2_0, #_2_1, #_2_2 {
+    border-bottom: 0;
+}
+
+#_0_0, #_1_0, #_2_0 {
+    border-left: 0;
+}
+
+#_0_2, #_1_2, #_2_2 {
+    border-right: 0;
+}
+
+.flexbox.column > .flexbox:not(.center) > div:first-child {
+    /*background-color: pink;*/
+    flex: 2;
+    align-items: flex-end;
+}
+
+.flexbox.column > .flexbox:not(.center) > div:first-child > div {
+    font-size: 130px;
+    letter-spacing: 0.5em;
+    font-weight: 500;
+    color: transparent;
+    text-shadow: 0px 0px 2.5px black;
+    font-family: 'Gochi Hand', cursive;
+    margin-left: 15px;
+}
+
+.flexbox.column > .flexbox:not(.center) > div:last-child {
+    /*background-color: gray;*/
+    flex: 1;
+}
