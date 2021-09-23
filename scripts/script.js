@@ -103,16 +103,26 @@ const displayController = (() => {
     let _players = [];
     let _playersIndex = 0;
 
-    function addPlayers(player1, player2) {
-        _players.push(player1, player2);
-    }
+    function _addPlayer() {
+        
+        
+        let name = DOMController.getUsernameInputValue();
+        let symbol = (_players.length == 0) ? "X" : "O";
 
-    function _updateBoard() {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                document.querySelector("#_" + i + "_" + j).innerText
-                    = gameBoard.getGameboard(i, j)
-                ;
+        if (!name) {
+            alert("Insert a valid name");
+            DOMController.addEventToSmth("button", _addPlayer);
+        } else {
+            _players.push(Player(name, symbol));
+
+            DOMController.clearUsernameInput();
+            DOMController.labelCycle();
+
+            if (_players.length == 1) {
+                DOMController.addEventToSmth("button", _addPlayer);
+            } else {
+                DOMController.usernameOptionsCycle();
+                DOMController.addEventToSmth("cells", _addSymbol)
             }
         }
     }
@@ -120,13 +130,15 @@ const displayController = (() => {
     function _endGame() {
         
         let result = gameBoard.whoWin();
+        let tie = gameBoard.isTie();
 
-        if (!result) {
-            if (gameBoard.isTie()) {
-                console.log("Tie");
+        if (tie || result) {
+            if (result) {
+                alert(`${result} vince`);    
+            } else {
+                alert("Tie");
             }
-        } else {
-            console.log(`${result} vince`);
+
         }
     }
 
@@ -140,31 +152,76 @@ const displayController = (() => {
             gameboardIndex[0], gameboardIndex[1])
         ;
 
-        _playersIndex = (_playersIndex + 1 ) % 2;
+        document.querySelector("#_" + gameboardIndex[0] + "_" + gameboardIndex[1])
+            .textContent = _players[_playersIndex].getSymbol();
+        ;
 
-        _updateBoard();
+        _playersIndex = (_playersIndex + 1 ) % 2;
 
         _endGame();
     }
 
-    function _clickable() {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                document.querySelector("#_" + i + "_" + j)
-                    .addEventListener("click", _addSymbol, {once: true})
-                ;
-            }
+    function startPage() {
+        DOMController.addEventToSmth("button", _addPlayer);
+    }
+
+    return {
+        startPage,
+
+    }
+})();
+
+const DOMController = (() => {
+    const _USERNAMELABEL = document.querySelector("#usernameLabel");
+    const _USERNAMEINPUT = document.querySelector("#usernameInput");
+    const _USERNAMEBUTTON = document.querySelector("#usernameButton");
+    const _LISTOFCELLS = document.querySelector(".flexbox.center .flexbox").childNodes;
+
+    function labelCycle() {
+        if (_USERNAMELABEL.textContent == "Player 1's name") {
+            _USERNAMELABEL.textContent = "Player 2's name"
+        } else {
+            _USERNAMELABEL.textContent = "Player 1's name"
         }
     }
 
-    _clickable();
+    function clearUsernameInput() {
+        _USERNAMEINPUT.value = "";
+    }
+
+    function addEventToSmth(smth, func) {
+        if (smth == "button") {
+            _USERNAMEBUTTON.addEventListener("click", func, {once: true});
+        } else if (smth == "cells") {
+            _LISTOFCELLS.forEach(div => div.addEventListener("click", func, {once: true}))
+        }
+    
+    }
+
+    function getUsernameInputValue() {
+        return _USERNAMEINPUT.value;
+    }
+
+    function usernameOptionsCycle() {
+        if (_USERNAMELABEL.style.display == "none") {
+            _USERNAMELABEL.style.display = "initial";
+            _USERNAMEINPUT.style.display = "initial";
+            _USERNAMEBUTTON.style.display = "initial";
+        } else {
+            _USERNAMELABEL.style.display = "none";
+            _USERNAMEINPUT.style.display = "none";
+            _USERNAMEBUTTON.style.display = "none";
+        }
+    }
 
     return {
-        addPlayers,
+        labelCycle,
+        clearUsernameInput,
+        addEventToSmth,
+        getUsernameInputValue,
+        usernameOptionsCycle,
 
     }
 })();
 ////////////////////////////////////////////////////////
-const Roberto = Player("Roberto", "X");
-const Alice = Player("Alice", "O");
-displayController.addPlayers(Roberto, Alice);
+displayController.startPage();
