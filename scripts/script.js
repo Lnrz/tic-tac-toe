@@ -1,6 +1,6 @@
 const gameBoard = (() => {
 
-    const _gameboard = [
+    let _gameboard = [
         [" ", " ", " "],
         [" ", " ", " "],
         [" ", " ", " "]
@@ -38,34 +38,33 @@ const gameBoard = (() => {
         }
 
         if (rowString.includes("XXX") || columnString.includes("XXX")) {
-            return "X";
+            return 1;
         } else if (rowString.includes("OOO") || columnString.includes("OOO")) {
-            return "O";
+            return 2;
         } else if (_gameboard[0][0] != " "
             && _gameboard[0][0] == _gameboard[1][1]
             && _gameboard[0][0] == _gameboard[2][2]) {
-            return _gameboard[0][0];
+            return (_gameboard[0][0] == "X") ? 1 : 2;
         } else if (_gameboard[0][2] != " "
             && _gameboard[0][2] == _gameboard[1][1]
             && _gameboard[0][2] == _gameboard[2][0]) {
-            return _gameboard[0][2];
+                return (_gameboard[0][2] == "X") ? 1 : 2;
         } else {
-            return ""
+            return 0;
         }
     }
 
     function isTie() {
-        let result = true;
 
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 if (_gameboard[i][j] == " ") {
-                    result = false;
+                    return false;
                 }
             }
         }
         
-        return result;
+        return true;
     }
 
     return {
@@ -73,8 +72,7 @@ const gameBoard = (() => {
         getGameboard,
         clearGameboard,
         isTie,
-        whoWin,
-
+        whoWin
     }
 })();
 
@@ -93,8 +91,7 @@ const Player = (name, symbol) => {
 
     return {
         getName,
-        getSymbol,
-
+        getSymbol
     }
 };
 
@@ -111,16 +108,13 @@ const displayController = (() => {
 
         if (!name) {
             alert("Insert a valid name");
-            DOMController.addEventToSmth("button", _addPlayer);
         } else {
             _players.push(Player(name, symbol));
 
             DOMController.clearUsernameInput();
             DOMController.labelCycle();
 
-            if (_players.length == 1) {
-                DOMController.addEventToSmth("button", _addPlayer);
-            } else {
+            if (_players.length == 2) {
                 DOMController.usernameOptionsCycle();
                 DOMController.addEventToSmth("cells", _addSymbol)
             }
@@ -133,12 +127,19 @@ const displayController = (() => {
         let tie = gameBoard.isTie();
 
         if (tie || result) {
+
+            let text;
+
             if (result) {
-                alert(`${result} vince`);    
+                text = `Congratulations ${
+                    _players[result - 1].getName()
+                }, you are the winner!`    
             } else {
-                alert("Tie");
+                text = "It's a tie!";
             }
 
+            DOMController.changeWinnerText(text);
+            DOMController.cycleBlackPanel();
         }
     }
 
@@ -161,13 +162,25 @@ const displayController = (() => {
         _endGame();
     }
 
+    function _restartGame() {
+        
+        _players = [];
+        _playersIndex = 0;
+
+        gameBoard.clearGameboard();
+
+        DOMController.resetCells(_addSymbol);
+        DOMController.usernameOptionsCycle();
+        DOMController.cycleBlackPanel();
+    }
+
     function startPage() {
         DOMController.addEventToSmth("button", _addPlayer);
+        DOMController.addEventToSmth("restart", _restartGame);
     }
 
     return {
-        startPage,
-
+        startPage
     }
 })();
 
@@ -176,6 +189,10 @@ const DOMController = (() => {
     const _USERNAMEINPUT = document.querySelector("#usernameInput");
     const _USERNAMEBUTTON = document.querySelector("#usernameButton");
     const _LISTOFCELLS = document.querySelector(".flexbox.center .flexbox").childNodes;
+    const _WINNERTEXT = document.querySelector("#winnerText");
+    const _RESTART = document.querySelector("#restart");
+    const _BLACKPANEL = document.querySelector("#blackpanel");
+
 
     function labelCycle() {
         if (_USERNAMELABEL.textContent == "Player 1's name") {
@@ -191,9 +208,11 @@ const DOMController = (() => {
 
     function addEventToSmth(smth, func) {
         if (smth == "button") {
-            _USERNAMEBUTTON.addEventListener("click", func, {once: true});
+            _USERNAMEBUTTON.addEventListener("click", func);
         } else if (smth == "cells") {
             _LISTOFCELLS.forEach(div => div.addEventListener("click", func, {once: true}))
+        } else if (smth == "restart") {
+            _RESTART.addEventListener("click", func);
         }
     
     }
@@ -214,13 +233,34 @@ const DOMController = (() => {
         }
     }
 
+    function changeWinnerText(text) {
+        _WINNERTEXT.textContent = text;
+    }
+
+    function cycleBlackPanel() {
+        if (_BLACKPANEL.style.display == "none" || !_BLACKPANEL.style.display) {
+            _BLACKPANEL.style.display = "flex";
+        } else {
+            _BLACKPANEL.style.display = "none";
+        }
+    }
+
+    function resetCells(func) {
+        _LISTOFCELLS.forEach(cell => {
+            cell.textContent = " ";
+            cell.removeEventListener("click", func);
+        });
+    }
+
     return {
         labelCycle,
         clearUsernameInput,
         addEventToSmth,
         getUsernameInputValue,
         usernameOptionsCycle,
-
+        changeWinnerText,
+        cycleBlackPanel,
+        resetCells
     }
 })();
 ////////////////////////////////////////////////////////

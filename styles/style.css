@@ -43,7 +43,7 @@ html, body, body > div {
     /*background-color: blue;*/
 }
 
-.flexbox.center > .flexbox {
+.flexbox.center:not(.blackpanel) > .flexbox {
     /*background-color: green;*/
     width: 450px;
     height: 450px;
@@ -129,4 +129,48 @@ html, body, body > div {
 #usernameButton:active {
     background-color: black;
     color: white;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.blackpanel {
+    background-color: rgba(0, 0, 0, 0.9);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.blackpanel div {
+    height: 500px;
+    width: 1000px;
+    background-color: black;
+    box-shadow: 0px 0px 5px white;
+    border-radius: 10px;
+}
+
+.blackpanel div p {
+    color: white;
+    font-size: 50px;
+    font-family: "Gochi hand", cursive;
+    margin: 0;
+}
+
+.rightbottom {
+    right: 20px;
+    top: 5px;
+}
+
+#restart {
+    color: rgba(255, 0, 0, 0.3);
+}
+
+#restart:hover {
+    color: red;
+}
+
+#blackpanel {
+    display: none;
 }
